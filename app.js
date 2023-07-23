@@ -5,11 +5,12 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
 const mongoose = require("mongoose");
+const dotenv = require('dotenv');
+dotenv.config();
+const homeStartingContent = "Welcome to Blog-Post, a virtual haven for aspiring writers and passionate bloggers. Unleash your creativity and express your unique voice on our platform. Seamlessly compose and publish your captivating blog posts, sharing your insights, stories, and expertise with the world. Join our community of wordsmiths and let your thoughts paint a masterpiece on this digital canvas of ideas.";
+const aboutContent = "Welcome to Blog-Post, a dynamic platform designed to empower individuals to share their voices and ideas with the world. Whether you're a seasoned writer or a novice storyteller, this is your space to unleash your creativity and craft compelling blog posts.Whether you want to share your knowledge, inspire others, or ignite meaningful discussions, Blog-Post provides the canvas for your thoughts to flourish. Start your blogging journey today and let your creativity soar on Blog-Post.";
 
-const homeStartingContent = "Welcome to ThoughtCanvas, a virtual haven for aspiring writers and passionate bloggers. Unleash your creativity and express your unique voice on our platform. Seamlessly compose and publish your captivating blog posts, sharing your insights, stories, and expertise with the world. Join our community of wordsmiths and let your thoughts paint a masterpiece on this digital canvas of ideas.";
-const aboutContent = "Welcome to ThoughtCanvas, a dynamic platform designed to empower individuals to share their voices and ideas with the world. Whether you're a seasoned writer or a novice storyteller, this is your space to unleash your creativity and craft compelling blog posts.Whether you want to share your knowledge, inspire others, or ignite meaningful discussions, ThoughtCanvas provides the canvas for your thoughts to flourish. Start your blogging journey today and let your creativity soar on ThoughtCanvas.";
-
-const contactContent = "We would love to hear from you at ThoughtCanvas! If you have any questions, suggestions, or simply want to connect, feel free to reach out. Our team is dedicated to providing you with the best blogging experience.You can email us at sinumang20@gmail.com or call us at our customer executive number:9065698814";
+const contactContent = "We would love to hear from you at Blog-Post! If you have any questions, suggestions, or simply want to connect, feel free to reach out. Our team is dedicated to providing you with the best blogging experience.You can email us at sinumang20@gmail.com or call us at our customer executive number:9065698814";
 
 const app = express();
 
@@ -21,9 +22,8 @@ app.use(express.static("public"));
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/blogDB');
+  await mongoose.connect(`${process.env.MONGO_URL}`);
 
-  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 
 const postSchema = new mongoose.Schema({
@@ -34,15 +34,35 @@ const postSchema = new mongoose.Schema({
 const Post = mongoose.model("Post", postSchema);
 
 
-app.get("/", function(req, res){
+app.get("/", async function(req, res){
+  try {
+    const posts = await Post.find({});
+    const formattedPosts = posts.map(function(post) {
+      const contentWithLineBreaks = post.content.replace(/\n/g, "<br>");
+      const contentWithFormatting = contentWithLineBreaks
+        .replace(/%(.*?)%/g, "<strong>$1</strong>")
+        .replace(/\(.?)\*/g, "<em>$1</em>");
 
-  Post.find({}).then((posts)=>{
-      res.render("home", {
+      return {
+        title: post.title,
+        content: contentWithFormatting,
+        _id:post._id
+      };
+    });
+
+    res.render("home", {
       startingContent: homeStartingContent,
-      posts: posts
-      });
-  });
+      posts: formattedPosts
+    });
+  } catch (err) {
+    // res.send("nan");
+    res.send("error occured");
+    console.log(err);
+    // Handle the error appropriately
+  }
 });
+
+
 
 app.get("/about", function(req, res){
   res.render("about", {aboutContent: aboutContent});
@@ -68,18 +88,33 @@ app.post("/compose", function(req, res){
 
 });
 
-app.get("/posts/:postId", function(req, res){
-  const requestedPostId = req.params.postId;
+app.get("/posts/:postId", async function(req, res){
+  try {
+    const requestedPostId = req.params.postId;
+    console.log(requestedPostId);
+    const post = await Post.findById(requestedPostId);
+    if (!post) {
+      // Handle the case where the post is not found
+      return res.status(404).render("error", { error: "Post not found" });
+    }
 
-  Post.find({_id: requestedPostId}).then((post)=>{
-    res.render("post",{
-      title:post.title,
-      content:post.content
+    const contentWithLineBreaks = post.content.replace(/\n/g, "<br>");
+    const contentWithFormatting = contentWithLineBreaks
+      .replace(/%(.*?)%/g, "<strong>$1</strong>")
+      .replace(/\(.?)\*/g, "<em>$1</em>");
+
+    res.render("post", {
+      title: post.title,
+      content: contentWithFormatting
     });
-  });
-
+  } catch (err) {
+    console.log(err);
+    // Handle the error appropriately
+  }
 });
 
+
+
 app.listen(4000, function() {
-  console.log("Server started on port 4000");
+  console.log("Server started on port 3000");
 });
