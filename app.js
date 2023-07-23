@@ -7,10 +7,10 @@ const _ = require("lodash");
 const mongoose = require("mongoose");
 const dotenv = require('dotenv');
 dotenv.config();
-const homeStartingContent = "Welcome to Blog-Post, a virtual haven for aspiring writers and passionate bloggers. Unleash your creativity and express your unique voice on our platform. Seamlessly compose and publish your captivating blog posts, sharing your insights, stories, and expertise with the world. Join our community of wordsmiths and let your thoughts paint a masterpiece on this digital canvas of ideas.";
-const aboutContent = "Welcome to Blog-Post, a dynamic platform designed to empower individuals to share their voices and ideas with the world. Whether you're a seasoned writer or a novice storyteller, this is your space to unleash your creativity and craft compelling blog posts.Whether you want to share your knowledge, inspire others, or ignite meaningful discussions, Blog-Post provides the canvas for your thoughts to flourish. Start your blogging journey today and let your creativity soar on Blog-Post.";
+const homeStartingContent = "Welcome to ThoughtCanvass, a virtual haven for aspiring writers and passionate bloggers. Unleash your creativity and express your unique voice on our platform. Seamlessly compose and publish your captivating blog posts, sharing your insights, stories, and expertise with the world. Join our community of wordsmiths and let your thoughts paint a masterpiece on this digital canvas of ideas.";
+const aboutContent = "Welcome to ThoughtCanvass, a dynamic platform designed to empower individuals to share their voices and ideas with the world. Whether you're a seasoned writer or a novice storyteller, this is your space to unleash your creativity and craft compelling blog posts.Whether you want to share your knowledge, inspire others, or ignite meaningful discussions, ThoughtCanvass provides the canvas for your thoughts to flourish. Start your blogging journey today and let your creativity soar on ThoughtCanvass.";
 
-const contactContent = "We would love to hear from you at Blog-Post! If you have any questions, suggestions, or simply want to connect, feel free to reach out. Our team is dedicated to providing you with the best blogging experience.You can email us at sinumang20@gmail.com or call us at our customer executive number:9065698814";
+const contactContent = "We would love to hear from you at ThoughtCanvass! If you have any questions, suggestions, or simply want to connect, feel free to reach out. Our team is dedicated to providing you with the best blogging experience.You can email us at sinumang20@gmail.com or call us at our customer executive number:9065698814";
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(express.static("public"));
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect(`${process.env.MONGO_URL}`);
+  await mongoose.connect('mongodb+srv://sinumang20:Samusha1@cluster111.fuj2jmd.mongodb.net/blogDB');
 
 }
 
