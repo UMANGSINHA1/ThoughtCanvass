@@ -41,7 +41,7 @@ app.get("/", async function(req, res){
       const contentWithLineBreaks = post.content.replace(/\n/g, "<br>");
       const contentWithFormatting = contentWithLineBreaks
         .replace(/%(.*?)%/g, "<strong>$1</strong>")
-        .replace(/\(.?)\*/g, "<em>$1</em>");
+        // .replace(/\(.?)\*/g, "<em>$1</em>");
 
       return {
         title: post.title,
@@ -101,7 +101,7 @@ app.get("/posts/:postId", async function(req, res){
     const contentWithLineBreaks = post.content.replace(/\n/g, "<br>");
     const contentWithFormatting = contentWithLineBreaks
       .replace(/%(.*?)%/g, "<strong>$1</strong>")
-      .replace(/\(.?)\*/g, "<em>$1</em>");
+      // .replace(/\(.?)\*/g, "<em>$1</em>");
 
     res.render("post", {
       title: post.title,
@@ -115,6 +115,6 @@ app.get("/posts/:postId", async function(req, res){
 
 
 
-app.listen(4000, function() {
+app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
